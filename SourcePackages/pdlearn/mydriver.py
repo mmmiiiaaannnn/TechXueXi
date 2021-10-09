@@ -1,5 +1,3 @@
-from pdlearn.pluspush import PlusPushHandler
-from pdlearn.fangtang import FangtangHandler
 from typing import List, Any
 
 import selenium
@@ -20,7 +18,7 @@ import os
 import time
 import requests
 import random
-from urllib.parse import quote
+from urllib.parse import quote, quote_plus
 import re
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -214,14 +212,13 @@ class Mydriver:
 
     def sendmsg(self):
         qcbase64 = self.getQRcode()
-        if gl.pushmode == "3":
-            ft = FangtangHandler(gl.accesstoken)
-            ft.ftmsgsend(qcbase64)
-        elif gl.pushmode == "4":
-            push = PlusPushHandler(gl.accesstoken)
-            push.ftmsgsend(qcbase64)
-
-        gl.pushprint(gl.scheme+decode_img(qcbase64))
+        # 发送二维码
+        gl.send_qrbase64(qcbase64)
+        # 发送链接
+        if gl.scheme:
+            gl.pushprint(gl.scheme+quote_plus(decode_img(qcbase64)))
+        else:
+            gl.pushprint(decode_img(qcbase64))
 
     def getQRcode(self):
         try:
