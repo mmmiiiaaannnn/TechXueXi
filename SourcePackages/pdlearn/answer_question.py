@@ -166,9 +166,13 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                         time.sleep(1)
                         continue
                     if "填空题" in category:
-                        print('没有找到提示，暂时略过')
-                        # print('使用默认答案  好 ')   #如无填空答案，使用默认答案 好 字 by Sean
-                        ##### tips = ['好']
+                        if answer_error_max is not 100:  #如果设置了跳过值，说明是自动运行，那么遇到错误就自动跳过，而错误阈值默认是100
+                            print('使用默认答案  好 ')   #如无填空答案，使用默认答案 好 字 by Sean
+                            tips = ['好']
+                            # print('使用默认答案  好 ')   #如无填空答案，使用默认答案 好 字 by Sean
+                            ##### tips = ['好']
+                        else:
+                            print('没有找到提示，暂时略过')
                         continue
                     elif "多选题" in category:
                         print('没有找到提示，多选题默认全选')
@@ -222,13 +226,15 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                                 driver_daily.radio_check(radio_out_tips)
                             # return driver_daily._search(content, options, excludes)
                             else:
-                                print('无法根据提示判断，请自行答题……')
-                                log_daily("！！！！！无法根据提示判断，请自行答题……！！！！！")
-                                # print('将使用默认全选答题')     #by Sean
-                                ##### len_option = len(options)
-                                ##### radio_in_tips = letters[:len_option]
-                                # driver_daily.radio_check(radio_in_tips)
-                                auto.prompt("等待用户手动答题...完成后请在此按回车...")
+                                if answer_error_max is not 100:  #如果设置了跳过值，说明是自动运行，那么遇到错误就自动跳过，而错误阈值默认是100
+                                    print('将使用默认全选答题')     #by Sean
+                                    len_option = len(options)
+                                    radio_in_tips = letters[:len_option]
+                                    driver_daily.radio_check(radio_in_tips)
+                                else:
+                                    print('无法根据提示判断，请自行答题……')
+                                    log_daily("！！！！！无法根据提示判断，请自行答题……！！！！！")
+                                    auto.prompt("等待用户手动答题...完成后请在此按回车...")
                         elif quiz_type == "weekly":
                             options = driver_weekly.radio_get_options()
                             radio_in_tips, radio_out_tips = "", ""
@@ -326,12 +332,14 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                                     driver_daily.radio_check(radio_out_tips)
                                 # return driver_daily._search(content, options, excludes)
                                 else:
-                                    print('无法根据提示判断，请自行答题……')
-                                    log_daily("！！！！！无法根据提示判断，请自行答题……！！！！！")
-                                    # print('将使用默认选 B')     #by Sean
-                                    ##### radio_in_tips = "B"
-                                    # driver_daily.radio_check(radio_in_tips)
-                                    auto.prompt("等待用户手动答题...完成后请在此按回车...")
+                                    if answer_error_max is not 100:  #如果设置了跳过值，说明是自动运行，那么遇到错误就自动跳过，而错误阈值默认是100
+                                        print('将使用默认选 B')     #by Sean
+                                        adio_in_tips = "B"
+                                        driver_daily.radio_check(radio_in_tips)
+                                    else:
+                                        print('无法根据提示判断，请自行答题……')
+                                        log_daily("！！！！！无法根据提示判断，请自行答题……！！！！！")
+                                        auto.prompt("等待用户手动答题...完成后请在此按回车...")
                         elif quiz_type == "weekly":
                             options = driver_weekly.radio_get_options()
                             if '因此本题选' in tips:
